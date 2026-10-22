@@ -1,0 +1,15 @@
+# Only the static web app (apps/web/dist) is deployed to Netlify. The API runs
+# elsewhere (Docker Compose), but the project's environment variables mirror
+# .env.example, so their placeholder/dev-default values also appear throughout
+# the repository and trip Netlify's secrets scanning.
+
+[build.environment]
+  # Non-sensitive configuration (ports, flags, URLs, names, paths). Their values
+  # are plain strings like "false", "4000" or "localhost" that match all over
+  # the codebase.
+  SECRETS_SCAN_OMIT_KEYS = "API_PORT,APP_URL,WEB_PORT,NODE_ENV,CORS_ORIGIN,COOKIE_SECURE,TRUST_PROXY,BOOTSTRAP_SUPER_ADMIN_EMAIL,BOOTSTRAP_SUPER_ADMIN_NAME,SEED_DEMO_DATA,SEED_ON_START,UPLOAD_DIR,MAX_UPLOAD_MB,SMTP_HOST,SMTP_PORT,SMTP_SECURE,SMTP_FROM,POSTGRES_USER,POSTGRES_DB"
+
+  # Placeholder credentials in documentation, examples and the API's local test
+  # setup. Sensitive keys (database URLs, passwords, session secret) are still
+  # scanned everywhere else, including the published apps/web/dist output.
+  SECRETS_SCAN_OMIT_PATHS = ".env.example,README.md,CONTEXT.md,docs/**,compose.yaml,compose.dev.yaml,apps/api/**,infrastructure/**,scripts/**"
