@@ -1,0 +1,7 @@
+# The site's environment variables mirror the placeholder values in .env.example
+# (local Docker defaults), which also appear throughout the repo's docs, compose
+# files and tests. The static web build doesn't read any of them, so exclude
+# these keys from secrets scanning. Real production secrets belong to the API
+# deployment, not this site.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "NODE_ENV,APP_URL,API_PORT,WEB_PORT,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,DATABASE_URL,TEST_DATABASE_URL,SESSION_SECRET,COOKIE_SECURE,TRUST_PROXY,CORS_ORIGIN,BOOTSTRAP_SUPER_ADMIN_EMAIL,BOOTSTRAP_SUPER_ADMIN_PASSWORD,BOOTSTRAP_SUPER_ADMIN_NAME,SEED_DEMO_DATA,SEED_ON_START,UPLOAD_DIR,MAX_UPLOAD_MB,SMTP_HOST,SMTP_PORT,SMTP_SECURE,SMTP_USER,SMTP_PASS,SMTP_FROM,CLOUDFLARE_TUNNEL_TOKEN"
