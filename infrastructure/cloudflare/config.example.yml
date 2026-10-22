@@ -1,0 +1,20 @@
+# Example Cloudflare Tunnel configuration for a locally-managed deployment.
+#
+# This file is for reference / manually-managed tunnels. The Docker Compose
+# "tunnel" profile uses a token instead:
+#   docker compose --profile tunnel up -d cloudflared
+#
+# Replace the placeholders. Never commit a real tunnel ID or credentials file.
+
+tunnel: REPLACE_WITH_TUNNEL_ID
+credentials-file: /etc/cloudflared/REPLACE_WITH_TUNNEL_ID.json
+
+ingress:
+  # The web container serves the SPA and proxies /api to the private API service.
+  - hostname: inventory.example.com
+    service: http://web:80
+    originRequest:
+      httpHostHeader: inventory.example.com
+      connectTimeout: 30s
+  # Everything else is refused.
+  - service: http_status:404
