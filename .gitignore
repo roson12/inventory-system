@@ -1,0 +1,21 @@
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+apps/api/uploads/
+uploads/
+playwright-report/
+test-results/
+.vite/
+*.tsbuildinfo
+
+# Compiled artifacts that sit next to their TypeScript sources
+apps/api/prisma/seed.js
+apps/api/prisma/seed.js.map
+apps/web/vite.config.js
+apps/web/vite.config.d.ts

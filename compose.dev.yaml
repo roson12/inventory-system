@@ -1,0 +1,17 @@
+# Development overrides: publish PostgreSQL to loopback for host-side npm run dev / tests.
+# Usage: docker compose -f compose.yaml -f compose.dev.yaml up -d postgres
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  api:
+    environment:
+      NODE_ENV: development
+      COOKIE_SECURE: "false"
+    ports:
+      - "127.0.0.1:4000:4000"
+
+  web:
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8080}:80"
