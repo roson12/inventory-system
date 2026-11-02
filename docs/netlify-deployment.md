@@ -25,6 +25,34 @@ and database on the Docker host.
 
 ## 1. Deploy the API on a Docker host
 
+### Fast path: Render Blueprint
+
+The repository includes [`render.yaml`](../render.yaml), which provisions the
+API container, a managed PostgreSQL database, a 1 GB uploads disk, and the
+required environment variables.
+
+1. Push this repository to GitHub (already done).
+2. Render Dashboard → **New** → **Blueprint** → select this repository.
+3. When prompted for `APP_URL`, enter your Netlify site URL
+   (`https://your-site.netlify.app`).
+4. Apply, wait for the deploy, then copy the service URL
+   (`https://inventory-api-xxxx.onrender.com`).
+5. Change both `api.example.com` targets in `netlify.toml` to that hostname,
+   commit, and push. Netlify redeploys automatically.
+
+Blueprint notes:
+
+- `plan: free` on the database expires after 30 days and is deleted. Upgrade to
+  `basic-256mb` before storing real data.
+- `plan: starter` on the web service is required for the uploads disk and for
+  the service to stay awake. A free web service sleeps and cannot keep uploaded
+  files.
+- Change `region` in `render.yaml` if `oregon` is not closest to your users;
+  the database and web service must stay in the same region.
+- Do not set `SEED_ON_START=true` in production.
+
+### Any other Docker host
+
 Use `apps/api/Dockerfile` with the repository root as the build context. The
 container applies `prisma migrate deploy` on startup via
 [`scripts/docker-entrypoint.sh`](../scripts/docker-entrypoint.sh).
