@@ -177,6 +177,7 @@ docker compose --profile e2e run --rm e2e
 - [API documentation](docs/api-documentation.md) (runtime Swagger at `/api/docs`)
 - [Authorization matrix](docs/authorization-matrix.md)
 - [Cloudflare deployment](docs/deployment.md)
+- [Netlify frontend deployment](docs/netlify-deployment.md)
 - [Backup and restore](docs/backup-and-restore.md)
 - [Feature checklist](docs/feature-checklist.md)
 - Domain glossary: [CONTEXT.md](CONTEXT.md); decisions: [docs/adr/](docs/adr/)

@@ -1,0 +1,52 @@
+# Netlify hosts ONLY the static React/Vite frontend from apps/web/dist.
+#
+# The Express API cannot run on Netlify: it needs PostgreSQL, long-lived
+# sessions, and persistent upload storage. Run it on a Docker host (Railway,
+# Render, Fly.io, or a VPS with compose.yaml), then point the two proxy rules
+# below at its public HTTPS hostname.
+#
+# Because the browser calls /api and /uploads on the Netlify origin, cookies and
+# CSRF tokens stay same-origin and no frontend code changes are required.
+
+[build]
+  base = "."
+  command = "npm run build -w apps/web"
+  publish = "apps/web/dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--no-audit --no-fund"
+
+# --- API proxy -------------------------------------------------------------
+# Netlify does NOT expand environment variables in redirect targets, so edit
+# api.example.com here (and nowhere else) before deploying.
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.example.com/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/uploads/*"
+  to = "https://api.example.com/uploads/:splat"
+  status = 200
+  force = true
+
+# --- SPA fallback (keep last) ----------------------------------------------
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# --- Security headers (mirrors apps/web/nginx.conf) ------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

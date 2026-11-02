@@ -1,0 +1,55 @@
+# Render Blueprint: deploys the API container + PostgreSQL for the Netlify
+# frontend. Create it with Render Dashboard -> New -> Blueprint, pick this repo,
+# and enter APP_URL when prompted (your Netlify site URL).
+#
+# Docs: https://render.com/docs/blueprint-spec
+
+databases:
+  - name: inventory-db
+    databaseName: ims
+    user: ims
+    region: oregon
+    # Free PostgreSQL expires after 30 days. Change to basic-256mb and remove
+    # this comment before using the deployment for real data.
+    plan: free
+
+services:
+  - type: web
+    name: inventory-api
+    runtime: docker
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    region: oregon
+    # Starter keeps the service always-on and supports the uploads disk below.
+    # A free service sleeps after inactivity and cannot attach a disk.
+    plan: starter
+    healthCheckPath: /api/health
+    autoDeploy: true
+    disk:
+      name: uploads
+      mountPath: /data/uploads
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: inventory-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: TRUST_PROXY
+        value: "1"
+      # Set to the Netlify URL, e.g. https://your-site.netlify.app.
+      # Password-reset links are built from this value.
+      - key: APP_URL
+        sync: false
+      - key: UPLOAD_DIR
+        value: /data/uploads
+      - key: MAX_UPLOAD_MB
+        value: "5"
+      # Do not enable demo seed data in production.
+      - key: SEED_ON_START
+        value: "false"
