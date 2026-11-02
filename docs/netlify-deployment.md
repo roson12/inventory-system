@@ -51,6 +51,28 @@ Blueprint notes:
   the database and web service must stay in the same region.
 - Do not set `SEED_ON_START=true` in production.
 
+### Troubleshooting: "database did not become ready in time"
+
+The container exits before the API starts when it cannot reach PostgreSQL. The
+entrypoint logs the underlying driver error (for example `ECONNREFUSED`,
+`ENOTFOUND`, or a TLS error). Check the Render dashboard:
+
+1. The `inventory-db` database exists and its status is **Available**. If you
+   created the API service manually instead of using the Blueprint, create the
+   database with **New → Postgres** first.
+2. The API service has a `DATABASE_URL` environment variable. Open the
+   database → **Connect** and copy the **Internal Database URL**, which looks
+   like `postgresql://ims:PASSWORD@dpg-xxxx-a/ims`.
+3. Use the **internal** URL. If you must use the external URL
+   (`...oregon-postgres.render.com`), append `?sslmode=require`.
+4. The database and web service are in the same region. Internal hostnames do
+   not resolve across regions.
+5. A free database that has passed its 30-day expiry is suspended and must be
+   upgraded before it accepts connections.
+
+After changing an environment variable, choose **Manual Deploy → Deploy latest
+commit** so the container restarts with the new value.
+
 ### Any other Docker host
 
 Use `apps/api/Dockerfile` with the repository root as the build context. The
